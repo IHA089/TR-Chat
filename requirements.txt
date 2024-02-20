@@ -1,0 +1,4 @@
+requests
+cryptography
+pycryptodome
+zipfile
