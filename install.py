@@ -46,6 +46,7 @@ def setup_ngrok():
     cmd = "./ngrok config add-authtoken {}".format(token)
     os.system(cmd)
 
+setup_library()
 install_ngrok()
 setup_ngrok()
 
