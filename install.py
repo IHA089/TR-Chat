@@ -15,11 +15,11 @@ def install_ngrok():
         print("Downloading ngrok for linux...")
         url = "https://bin.equinox.io/c/bNyj1mQVY4c/ngrok-v3-stable-linux-amd64.tgz"
         file_name = "ngrok.tgz"
-    elif os_name == "Window" and architecture == "32bit":
+    elif os_name == "Windows" and architecture == "32bit":
         print("Downlading ngrok for window 32 bit...")
         url = "https://bin.equinox.io/c/bNyj1mQVY4c/ngrok-v3-stable-windows-386.zip"
         file_name = "ngrok.zip"
-    elif os_name == "Window" and architecture == "64bit":
+    elif os_name == "Windows" and architecture == "64bit":
         print("Downloading ngrok for window 64 bit...")
         url = "https://bin.equinox.io/c/bNyj1mQVY4c/ngrok-v3-stable-windows-amd64.zip"
         file_name = "ngrok.zip"
