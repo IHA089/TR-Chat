@@ -29,7 +29,16 @@ else:
 
 def updater():
     global sender_data
-    print("\r"+"Type : "+sender_data, end="")
+    terminal_width = os.get_terminal_size().columns
+    j=0
+    if(len(sender_data)>=terminal_width-8):
+        j=1
+
+    if j==1:
+        print("\rType : "+sender_data[-(terminal_width-8):], end="")
+    else:
+        print("\r"+"Type : "+sender_data, end="")
+    
 
 def Reciver(client, key):
     while True:
@@ -74,11 +83,27 @@ def writer(client, key):
             elif os_name == "Linux" and char == '\x7f': 
                 input_data = input_data[:-1]
                 sender_data = input_data+"\x7f"+" "
-                print("\r"+sender_data, end="")
+                terminal_width = os.get_terminal_size().columns
+                j=0
+                if(len(sender_data)>=terminal_width-8):
+                    j=1
+
+                if j==1:
+                    print("\rType : "+sender_data[-(terminal_width-8):], end="")
+                else:
+                    print("\r"+"Type : "+sender_data, end="")
             elif os_name == "Window" and char == "\b":
                 input_data = input_data[:-1]
                 sender_data = input_data+"\b"+" "
-                print("\r"+sender_data, end="")
+                terminal_width = os.get_terminal_size().columns
+                j=0
+                if(len(sender_data)>=terminal_width-8):
+                    j=1
+
+                if j==1:
+                    print("\rType : "+sender_data[-(terminal_width-8):], end="")
+                else:
+                    print("\r"+"Type : "+sender_data, end="")
             else:
                 input_data = input_data+char
                 sender_data = input_data
@@ -101,27 +126,32 @@ except ConnectionRefusedError:
 client.send(bytes(name, 'utf-8'))
 data = client.recv(1024)
 data = str(data, 'utf-8')
-if data == "accept":
-    print("connected with server")
-    pub_key, pri_key = MSG_ENC.RSA_KEY_GEN()
-    dd = pub_key.export_key()
-    client.send(dd)
-    enc_enc_key = client.recv(1024)
-    ENC_KEY = MSG_ENC.RSA_DEC(pri_key, enc_enc_key)
-    rec = threading.Thread(target = Reciver, args=(client, ENC_KEY))
-    rec.start()
-    writer(client, ENC_KEY)
-    rec.join()
+
+try:
+    if data == "accept":
+        print("connected with server")
+        pub_key, pri_key = MSG_ENC.RSA_KEY_GEN()
+        dd = pub_key.export_key()
+        client.send(dd)
+        enc_enc_key = client.recv(1024)
+        ENC_KEY = MSG_ENC.RSA_DEC(pri_key, enc_enc_key)
+        rec = threading.Thread(target = Reciver, args=(client, ENC_KEY))
+        rec.start()
+        writer(client, ENC_KEY)
+        rec.join()
+        sys.exit()
+    elif data == "decline":
+        print("Server decline your request")
+        client.close()
+        sys.exit()
+    elif data == "avail":
+        print("{} is already given, please provide different name".format(name))
+        client.close()
+        sys.exit()
+    else:
+        print("Failed to connect")
+        client.close()
+        sys.exit()
+except KeyboardInterrupt:
     sys.exit()
-elif data == "decline":
-    print("Server decline your request")
-    client.close()
-    sys.exit()
-elif data == "avail":
-    print("{} is already given, please provide different name".format(name))
-    client.close()
-    sys.exit()
-else:
-    print("Failed to connect")
-    client.close()
-    sys.exit()
+    
